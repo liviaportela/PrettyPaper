@@ -48,7 +48,7 @@ class App:
         self.botaoUsuario = Button(self.bemVindo, bd=0, image=self.imgBotClie, bg="#fff2f2", command=lambda: self.tela_cliente())
         self.botaoUsuario.place(x=67, y=450)
 
-    #Tela de Login ou cadastro do cliente
+    #Tela de login ou cadastro do cliente
     def tela_cliente(self):
         self.bemVindo.destroy() # Destroy a tela secundária 
         self.entrar = Frame(self.root, width='360', height="640", bg='#fffff2') # Cria outra tela secundária dentro da tela principal
@@ -130,6 +130,29 @@ class App:
         self.imgBotEnt = PhotoImage(file="Imagens\Botoes\Button_entrar.png")
         self.botaoEnt = Button(self.login, bd=0, image=self.imgBotEnt, bg="#fff2f2", command= self.loginCliente)
         self.botaoEnt.place(x=85, y=390)
+    
+    #Verifica as informações de login do cliente
+    def loginCliente(self):
+        self.emailTel = self.campoEmailTel.get()
+        self.senha = self.campoSenha.get()
+
+        self.Dados()
+
+        cmd= f'SELECT * FROM Clientes WHERE (EmailCliente = ("{self.emailTel}") OR TelefoneCliente = ("{self.emailTel}")) AND SenhaCliente = ("{self.senha}")'
+        cursordb.execute(cmd)
+        resultado = cursordb.fetchall()
+        i = 0
+        if i < len(resultado):
+            self.tela_home()
+        else:
+            self.mensagem["text"] = "Erro na autenticação"
+
+    def Dados(self):
+        self.emailTel = self.campoEmailTel.get()
+
+        cmd= f'SELECT NomeCliente, EmailCliente, TelefoneCliente, SenhaCliente FROM Clientes WHERE (EmailCliente = ("{self.emailTel}") OR TelefoneCliente = ("{self.emailTel}"))'
+        cursordb.execute(cmd)
+        self.dadosUsuario = cursordb.fetchall()
 
     #Tela de login do Funcionário
     def tela_login_func(self):
@@ -158,6 +181,29 @@ class App:
         self.botaoEnt = Button(self.loginfunc, bd=0, image=self.imgBotEnt, bg="#fff2f2", command= self.loginFuncio)
         self.botaoEnt.place(x=85, y=390)
 
+    #Verifica as informações de login do funcionário
+    def loginFuncio(self):
+        self.emailTel = self.campoEmailTel.get()
+        self.senha = self.campoSenha.get()
+
+        self.DadosFunc()
+
+        cmd= f'SELECT * FROM Funcionários WHERE (EmailFunc = ("{self.emailTel}") OR TelefoneFunc = ("{self.emailTel}")) AND SenhaFunc = ("{self.senha}")'
+        cursordb.execute(cmd)
+        resultado = cursordb.fetchall()
+        i = 0
+        if i < len(resultado):
+            self.tela_home_func()
+        else:
+            self.mensagem["text"] = "Erro na autenticação"
+
+    def DadosFunc(self):
+        self.emailTel = self.campoEmailTel.get()
+
+        cmd= f'SELECT NomeFunc, EmailFunc, TelefoneFunc, SenhaFunc FROM Funcionários WHERE (EmailFunc = ("{self.emailTel}") OR TelefoneFunc = ("{self.emailTel}"))'
+        cursordb.execute(cmd)
+        self.dadosFunc = cursordb.fetchall()
+
     #Tela de home do cliente
     def tela_home(self):
         self.login.destroy()
@@ -171,9 +217,15 @@ class App:
         self.imgBotMenu = PhotoImage(file="Imagens\Botoes\Button_Menu.png")
         self.BotMenu = Button(self.home, bd=0, image=self.imgBotMenu, bg="#fff2f2", command=lambda: self.tela_menu())
         self.BotMenu.place(x=10, y=25)
+        self.imgBotFav = PhotoImage(file="Imagens\Botoes\Button_Favoritos.png")
+        self.BotFavoritos = Button(self.home, bd=0, image=self.imgBotFav, bg="#ffd0d0", command=lambda: self.tela_favoritos())
+        self.BotFavoritos.place(x=9, y=70)
+        self.imgBotCar = PhotoImage(file="Imagens\Botoes\Button_Carrinho.png")
+        self.BotCarrinho = Button(self.home, bd=0, image=self.imgBotCar, bg="#ffd0d0", command=lambda: self.tela_carrinho())
+        self.BotCarrinho.place(x=44, y=70)
         self.imgBotPerfil = PhotoImage(file="Imagens\Botoes\Button_Perfil.png")
         self.BotPerfil = Button(self.home, bd=0, image=self.imgBotPerfil, bg="#ffd0d0", command=lambda: self.tela_conta())
-        self.BotPerfil.place(x=50, y=70)
+        self.BotPerfil.place(x=80, y=70)
 
         self.campoPesquisa= Entry(self.home, font="Bahnschrift 9", width=19, fg="#A6A6A6", bg="#fff", relief="flat")
         self.campoPesquisa.place(x=180,y=76)
@@ -215,7 +267,6 @@ class App:
         self.imgRedes = PhotoImage(file="Imagens\Botoes\ImgRedes.png")
         self.Redes = Label(self.menu, bd=0, image=self.imgRedes, bg="#fff2f2")
         self.Redes.place(x=14, y=173)
-
         self.BotEnt.place(x=5, y=155)
         self.campoPesquisa= Entry(self.menu, font="Bahnschrift 9", text="", width=19, fg="#A6A6A6", bg="#fff", relief="flat")
         self.campoPesquisa.place(x=180,y=75)
@@ -305,49 +356,39 @@ class App:
         self.imgBotAlt = PhotoImage(file="Imagens\Botoes\Button_AltPro.png")
         self.BotAlt = Button(self.homefunc, bd=0, image=self.imgBotAlt, bg="#fff2f2", command=lambda: self.tela_alterar_produtos())
         self.BotAlt.place(x=70, y=315)
+        self.imgBotExc = PhotoImage(file="Imagens\Botoes\Button_Excluir.png")
+        self.BotExc = Button(self.homefunc, bd=0, image=self.imgBotExc, bg="#fff2f2", command=lambda: self.tela_excluir_produtos())
+        self.BotExc.place(x=70, y=380)
         self.imgBotVer = PhotoImage(file="Imagens\Botoes\Button_Verificar.png")
         self.BotVer = Button(self.homefunc, bd=0, image=self.imgBotVer, bg="#fff2f2", command=lambda: self.tela_pedidos())
-        self.BotVer.place(x=70, y=380)
+        self.BotVer.place(x=70, y=445)
 
-    #Tela Conta
+    #Tela conta do cliente
     def tela_conta(self):
         self.home.destroy()
-        
         self.perfil = Frame(self.root, width='360', height="640", bg='#bbb')
         self.perfil.place(x='0', y='0') # Cria uma tela secundária dentro da tela principal
 
         self.backgroundImg = PhotoImage(file="Imagens\Background\Bg_conta.png")
         self.imgBotExc = PhotoImage(file="Imagens\Botoes\Bt_exclr.png")
-        
         self.Imagem = Label(self.perfil, image=self.backgroundImg)
         self.Imagem.pack()
 
         self.imgBotVoltar = PhotoImage(file="Imagens\Botoes\Button_voltar.png")
         self.BotVoltar = Button(self.perfil, bd=0, image=self.imgBotVoltar, bg="#fff2f2", command=lambda: self.tela_home())
         self.BotVoltar.place(x=15, y=30)
-
-        self.Nome = Label(self.perfil, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
+        self.Nome = Label(self.perfil, text=str(self.dadosUsuario[0][0]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
         self.Nome.place(x=35, y=285)
-
-        self.Nome["text"] = {self.NomeCliente}
-        self.Email["text"] = {self.EmailCliente}
-        self.Nome["text"] = {self.TelefoneCliente}
-        self.Nome["text"] = {self.SenhaCliente}
-
+        self.Email = Label(self.perfil, text=str(self.dadosUsuario[0][1]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
+        self.Email.place(x=35, y=355)
+        self.Telefone = Label(self.perfil, text=str(self.dadosUsuario[0][2]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
+        self.Telefone.place(x=35, y=425)
+        self.Senha = Label(self.perfil, text=str(self.dadosUsuario[0][3]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
+        self.Senha.place(x=35, y=495)
         self.botaoExc = Button(self.perfil, bd=0, image=self.imgBotExc, bg="#fff2f2", command=lambda: self.tela_excluir())
         self.botaoExc.place(x=120, y=520)
 
-    def Dados(self):
-        cmd= f'SELECT * FROM Clientes WHERE (EmailCliente = ("{self.email}")'
-        cursordb.execute(cmd)
-        resultado = cursordb.fetchall()
-        i = 0
-
-        if i < len(resultado):
-            self.tela_home()
-            return self.EmailCliente, self.SenhaCliente, self.NomeCliente, self.TelefoneCliente
-
-    #Tela Conta
+    #Tela da conta do funcionário
     def tela_conta_func(self):
         self.homefunc.destroy()
         self.perfil = Frame(self.root, width='360', height="640", bg='#bbb')
@@ -361,14 +402,14 @@ class App:
         self.imgBotVoltar = PhotoImage(file="Imagens\Botoes\Button_voltar.png")
         self.BotVoltar = Button(self.perfil, bd=0, image=self.imgBotVoltar, bg="#fff2f2", command=lambda: self.tela_home_func())
         self.BotVoltar.place(x=15, y=30)
-        self.Nome = Label(self.perfil, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
-        self.Nome.place(x=85, y=455)
-        self.Email = Label(self.perfil, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
-        self.Email.place(x=85, y=455)
-        self.Telefone = Label(self.perfil, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
-        self.Telefone.place(x=85, y=455)
-        self.Senha = Label(self.perfil, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
-        self.Senha.place(x=85, y=455)
+        self.Nome = Label(self.perfil, text=str(self.dadosFunc[0][0]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
+        self.Nome.place(x=35, y=285)
+        self.Email = Label(self.perfil, text=str(self.dadosFunc[0][1]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
+        self.Email.place(x=35, y=355)
+        self.Telefone = Label(self.perfil, text=str(self.dadosFunc[0][2]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
+        self.Telefone.place(x=35, y=425)
+        self.Senha = Label(self.perfil, text=str(self.dadosFunc[0][3]), font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2",)
+        self.Senha.place(x=35, y=495)
 
     #Tela de cadastro dos produtos
     def tela_cadastro_produtos(self):
@@ -444,6 +485,36 @@ class App:
         self.mensagem = Label(self.alterarpro, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
         self.mensagem.place(x=55,y=425)  
 
+    #Tela Excluir produtos
+    def tela_excluir_produtos(self):
+        self.homefunc.destroy() # Destroy a tela secundária 
+
+        self.deletar = Frame(self.root, width='360', height="640", bg='#fffff2') # Cria outra tela secundária dentro da tela principal
+        self.deletar.place(x='0', y='0')
+
+        self.backgroundImg = PhotoImage(file="Imagens\Background\TelaExcluirProdutos.png")
+        self.imgBotSim = PhotoImage(file="Imagens\Botoes\Bt_exclr_sim.png")
+        self.imgBotNao = PhotoImage(file="Imagens\Botoes\Bt_exclr_nao.png")
+
+        self.Imagem = Label(self.deletar, image=self.backgroundImg)
+        self.Imagem.pack()
+
+        self.imgBotVoltar = PhotoImage(file="Imagens\Botoes\Button_voltar.png")
+        self.BotVoltar = Button(self.deletar, bd=0, image=self.imgBotVoltar, bg="#fff2f2", command=lambda: self.tela_home_func())
+        self.BotVoltar.place(x=15, y=30) 
+
+        self.LbId = Label(self.deletar, text="ID_PRODUTO", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
+        self.LbId.place(x=35,y=120)  
+        self.campoId= Entry(self.deletar, font="Bahnschrift 15", width=25, fg="#A6A6A6", bg="#fff2f2", relief="groove")
+        self.campoId.place(x=40,y=150)
+
+        self.botaoSim = Button(self.deletar, bd=0, image=self.imgBotSim, bg="#fff2f2", command=lambda: self.excluir_produto)
+        self.botaoSim.place(x=70, y=290)
+        self.botaoNao = Button(self.deletar, bd=0, image=self.imgBotNao, bg="#fff2f2", command=lambda: self.tela_home_func())
+        self.botaoNao.place(x=185, y=290)  
+        self.mensagem = Label(self.deletar, text="", font="Bahnschrift 15", fg="#A6A6A6", bg="#fff2f2")
+        self.mensagem.place(x=55,y=425)    
+
     #Tela de pedidos
     def tela_pedidos(self):
         self.homefunc.destroy()
@@ -457,31 +528,21 @@ class App:
         self.imgBotVoltar = PhotoImage(file="Imagens\Botoes\Button_voltar.png")
         self.BotVoltar = Button(self.pedidos, bd=0, image=self.imgBotVoltar, bg="#fff2f2", command=lambda: self.tela_home_func())
         self.BotVoltar.place(x=15, y=30) 
-        
-    #Tela Excluir    
-    def tela_excluir(self):
-        self.perfil.destroy() # Destroy a tela secundária 
-
-        self.deletar = Frame(self.root, width='360', height="640", bg='#fffff2') # Cria outra tela secundária dentro da tela principal
-        self.deletar.place(x='0', y='0')
-
-        self.backgroundImg = PhotoImage(file="Imagens\Background\Bg_excluir_conta.png")
-        self.imgBotSim = PhotoImage(file="Imagens\Botoes\Bt_exclr_sim.png")
-        self.imgBotNao = PhotoImage(file="Imagens\Botoes\Bt_exclr_nao.png")
-
-        self.Imagem = Label(self.deletar, image=self.backgroundImg)
-        self.Imagem.pack()
-
-        self.botaoSim = Button(self.deletar, bd=0, image=self.imgBotSim, bg="#fff2f2", command=lambda: self.excluir)
-        self.botaoSim.place(x=70, y=340)
-        self.botaoNao = Button(self.deletar, bd=0, image=self.imgBotNao, bg="#fff2f2", command=lambda: self.usuario)
-        self.botaoNao.place(x=185, y=340)
     
-    def Carrinho(self):
-        self.conta.destroy()
+    def tela_carrinho(self):
+        self.home.destroy()
 
         self.carrinho = Frame(self.root, width='360', height="640", bg='#bbb')
         self.carrinho.place(x='0', y='0')
+
+        self.backgroundImg = PhotoImage(file="Imagens\Background\Bg_carrinho.png")
+        self.Imagem = Label(image=self.backgroundImg).pack()
+
+    def tela_favoritos(self):
+        self.home.destroy()
+
+        self.favoritos = Frame(self.root, width='360', height="640", bg='#bbb')
+        self.favoritos.place(x='0', y='0')
 
         self.backgroundImg = PhotoImage(file="Imagens\Background\Bg_carrinho.png")
         self.Imagem = Label(image=self.backgroundImg).pack()
@@ -500,46 +561,6 @@ class App:
             self.tela_login()
         else:
             self.mensagem["text"] = "Preencha todos os campos"
-
-    #Verifica as informações de login do cliente
-    def loginCliente(self):
-        self.emailTel = self.campoEmailTel.get()
-        self.senha = self.campoSenha.get()
-
-        cmd= f'SELECT * FROM Clientes WHERE (EmailCliente = ("{self.emailTel}") OR TelefoneCliente = ("{self.emailTel}")) AND SenhaCliente = ("{self.senha}")'
-        cursordb.execute(cmd)
-        resultado = cursordb.fetchall()
-        i = 0
-
-        if i < len(resultado):
-            self.tela_home()
-        else:
-            self.mensagem["text"] = "Erro na autenticação"
-    
-    #Excluir cliente
-    def excluir(self):
-        self.nome = self.Nome.get()
-
-        cmd= f'DELETE FROM Clientes WHERE NomeCliente = {self.nome})'
-        cursordb.execute(cmd)
-        conexaodb.commit()
-
-        self.tela_login()
-
-    #Verifica as informações de login do funcionário
-    def loginFuncio(self):
-        self.emailTel = self.campoEmailTel.get()
-        self.senha = self.campoSenha.get()
-
-        cmd= f'SELECT * FROM Funcionários WHERE (EmailFunc = ("{self.emailTel}") OR TelefoneFunc = ("{self.emailTel}")) AND SenhaFunc = ("{self.senha}")'
-        cursordb.execute(cmd)
-        resultadofunc = cursordb.fetchall()
-        i = 0
-
-        if i < len(resultadofunc):
-            self.tela_home_func()
-        else:
-            self.mensagem["text"] = "Erro na autenticação"
 
     #Cadastrar produto
     def cadastrar_produto(self):
@@ -565,11 +586,23 @@ class App:
         self.quantidade = self.campoQuantidade.get()
 
         if self.id or self.descricao or self.categoria or self.valor or self.quantidade is None:
-            cmd= f'UPDATE Produtos SET Descricao = "{self.descricao}",Categoria = "{self.categoria}",Valor = "{self.valor}",Quantidade = "{self.quantidade}" WHERE ID_PRODUTO = "{self.id}"'
+            cmd= f'UPDATE Produtos SET Descricao = "{self.descricao}",Categoria = "{self.categoria}",Valor = "{self.valor}",Quantidade = "{self.quantidade}" WHERE Id_Produto = "{self.id}"'
             cursordb.execute(cmd)
             conexaodb.commit()
             self.tela_home_func()
         else:
             self.mensagem["text"] = "Preencha todos os campos"      
+
+    #Excluir cliente
+    def excluir_produto(self):
+        self.id = self.campoId.get()
+
+        if self.id is None:
+            cmd= f'DELETE FROM Produtos WHERE Id_Produto = {self.id})'
+            cursordb.execute(cmd)
+            conexaodb.commit()
+            self.tela_home_func()
+        else:
+            self.mensagem["text"] = "Preencha o campo id"
 
 App()
